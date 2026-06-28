@@ -960,6 +960,23 @@
         // 頁面載入時初始化
         initSectionFromHash();
 
+        // 通知上層視窗（Netlify iframe 外殼）hash 已變更
+        window.addEventListener('hashchange', () => {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'hashChange', hash: window.location.hash }, '*');
+            }
+        });
+
+        // 接收上層視窗傳來的 hash 同步訊號
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'syncHash') {
+                const targetHash = event.data.hash;
+                if (window.location.hash !== targetHash) {
+                    window.location.hash = targetHash;
+                }
+            }
+        });
+
         // 兩大節目分頁 Tab 切換邏輯
         function switchShowTab(tabId) {
             const freetalkTab = document.getElementById('tab-content-freetalk');
