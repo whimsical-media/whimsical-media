@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whimsical Media | 音樂節目平台</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans TC, Montserrat & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#052440',      // 完全忠於上傳標誌的深藍底色
+                            navy: '#031a30',      // 更深沉的搭配底色
+                            gold: '#d1a12e',      // 完全忠於上傳標誌的暖金標誌色
+                            lightgold: '#ebd49a', // 柔金色
+                            card: '#0a3254',      // 卡片底色
+                            accent: '#f2bd3f'     // 高亮純金
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    boxShadow: {
+                        'gold-sm': '0 2px 10px rgba(209, 161, 46, 0.15)',
+                        'gold-lg': '0 10px 30px rgba(209, 161, 46, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 自訂滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #052440;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1a12e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2bd3f;
+        }
+        /* 漸變與模糊特效 */
+        .glass-nav {
+            background: rgba(5, 36, 64, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(209, 161, 46, 0.15);
+        }
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FFF 30%, #d1a12e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-logo-gold {
+            background: linear-gradient(135deg, #ebd49a 0%, #d1a12e 50%, #aa7c11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* 卡片光暈 hover */
+        .glow-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glow-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(209, 161, 46, 0.15);
+            border-color: rgba(209, 161, 46, 0.4);
+        }
+        /* 動態音波裝飾 */
+        .bar {
+            width: 3px;
+            background-color: #d1a12e;
+            animation: bounce 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes bounce {
+            10% { height: 5px; }
+            50% { height: 25px; }
+            100% { height: 10px; }
+        }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.3s; }
+        .bar:nth-child(4) { animation-delay: 0.2s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+
+        /* 導航下拉選單 */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: #052440;
+            border: 1px solid rgba(209, 161, 46, 0.2);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            z-index: 60;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(4px);
+        }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .nav-dropdown-menu a:hover {
+            background: rgba(209, 161, 46, 0.1);
+            color: #d1a12e;
+        }
+        .nav-dropdown-trigger::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: 4px;
+            font-size: 0.75rem;
+            display: inline-block;
+            transition: transform 0.25s;
+        }
+        .nav-dropdown:hover .nav-dropdown-trigger::after {
+            transform: rotate(180deg);
+        }
+
+        /* 分頁容器 — 個別分頁切換 */
+        #page-container {
+            position: relative;
+            width: 100%;
+            min-height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+        .page-section {
+            display: none;
+            animation: pageFadeIn 0.4s ease forwards;
+        }
+        .page-section.active {
+            display: block;
+        }
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 燈箱 (Lightbox) 樣式 */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(3, 26, 48, 0.92);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            cursor: pointer;
+        }
+        .lightbox-overlay.active {
+            display: flex;
+        }
+        .lightbox-image {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 2px solid rgba(209, 161, 46, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            cursor: default;
+        }
+        .lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(209, 161, 46, 0.15);
+            border: 1px solid rgba(209, 161, 46, 0.3);
+            color: #d1a12e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+            z-index: 101;
+        }
+        .lightbox-close:hover {
+            background: #d1a12e;
+            color: #031a30;
+        }
+        .lightbox-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(209, 161, 46, 0.12);
+            border: 1px solid rgba(209, 161, 46, 0.2);
+            color: #d1a12e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+            z-index: 101;
+        }
+        .lightbox-nav:hover {
+            background: rgba(209, 161, 46, 0.3);
+        }
+        .lightbox-prev { left: 20px; }
+        .lightbox-next { right: 20px; }
+        .lightbox-counter {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ebd49a;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            z-index: 101;
+            background: rgba(3, 26, 48, 0.7);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(209, 161, 46, 0.15);
+        }
+        @media (max-width: 640px) {
+            .lightbox-nav { width: 36px; height: 36px; font-size: 0.9rem; }
+            .lightbox-prev { left: 8px; }
+            .lightbox-next { right: 8px; }
+            .lightbox-close { top: 12px; right: 12px; width: 36px; height: 36px; }
+            .lightbox-overlay { padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-gray-100 font-sans selection:bg-brand-gold selection:text-brand-dark overflow-x-hidden">
+
+    <!-- 頂部導航欄 (Navigation) -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo 區域 (直接引用您上傳的圓形標誌圖片) -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <img src="cropped_circle_image.png" alt="Whimsical Media Logo" class="h-16 w-auto rounded-full object-contain border border-brand-gold/15 transition-transform duration-300 group-hover:scale-105">
+                </a>
+
+                <!-- 桌面版導航選單 -->
+                <div class="hidden md:flex items-center space-x-8 lg:space-x-12">
+                    <a href="javascript:void(0)" onclick="switchSection('about')" class="text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">關於我們</a>
+                    <div class="nav-dropdown">
+                        <a href="javascript:void(0)" onclick="switchSection('shows')" class="nav-dropdown-trigger text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">頻道節目</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="javascript:void(0)" onclick="switchSection('shows');setTimeout(function(){switchShowTab('freetalk')},100)">自由唱，自由講</a>
+                            <a href="javascript:void(0)" onclick="switchSection('shows');setTimeout(function(){switchShowTab('soundbox')},100)">Sound Box 聲盒子</a>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown">
+                        <a href="javascript:void(0)" onclick="switchSection('events')" class="nav-dropdown-trigger text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">過往活動</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round2')},100)">第二屆自由唱歌唱比賽</a>
+                            <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round1')},100)">第一屆自由唱歌唱比賽</a>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" onclick="switchSection('courses')" class="text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">自彈自唱課程</a>
+                </div>
+
+                <!-- 手機版選單按鈕 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-gold focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 手機版側邊選單 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-dark border-t border-brand-gold/10 px-4 pt-2 pb-6 space-y-4 shadow-lg">
+            <a href="javascript:void(0)" onclick="switchSection('about');mobileMenu.classList.add('hidden')" class="block text-gray-300 hover:text-brand-gold transition text-base py-2 border-b border-brand-navy">關於我們</a>
+            <a href="javascript:void(0)" onclick="switchSection('shows')" class="block text-brand-gold hover:text-brand-gold transition text-base py-2 border-b border-brand-navy font-bold">頻道節目</a>
+            <a href="javascript:void(0)" onclick="switchSection('shows');setTimeout(function(){switchShowTab('freetalk');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy/50">　↳ 自由唱，自由講</a>
+            <a href="javascript:void(0)" onclick="switchSection('shows');setTimeout(function(){switchShowTab('soundbox');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy">　↳ Sound Box 聲盒子</a>
+            <a href="javascript:void(0)" onclick="switchSection('events')" class="block text-brand-gold hover:text-brand-gold transition text-base py-2 border-b border-brand-navy font-bold">過往活動</a>
+            <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round2');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy/50">　↳ 第二屆自由唱歌唱比賽</a>
+            <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round1');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy">　↳ 第一屆自由唱歌唱比賽</a>
+            <a href="javascript:void(0)" onclick="switchSection('courses');mobileMenu.classList.add('hidden')" class="block text-gray-300 hover:text-brand-gold transition text-base py-2 border-b border-brand-navy">自彈自唱課程</a>
+        </div>
+    </nav>
+
+    <div id="page-container">
+
+    <!-- 關於我們 (About Section) -->
+    <section id="about" class="page-section active pt-32 pb-24 bg-brand-dark relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- 左側：品牌形象卡 (完全 100% 引用您上傳的圓形 Logo 圖片) -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative z-10 rounded-2xl overflow-hidden border border-brand-gold/20 shadow-2xl bg-[#052440] p-12 text-center glow-hover flex flex-col items-center">
+                        
+                        <!-- 完美的、完全 100% 忠實的官方完整 Logo 圖片呈現區 -->
+                        <div class="flex flex-col items-center text-center select-none mb-8">
+                            <div class="w-full max-w-[240px] mb-6 overflow-hidden rounded-full border-2 border-brand-gold/20 shadow-lg">
+                                <img src="cropped_circle_image.png" alt="Whimsical Media Official Logo" class="w-full h-auto object-contain rounded-full">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center gap-1.5 h-6 items-end mb-6">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            「Whimsical」意為奇妙與無拘無束。透過最真實、最具感染力的歌聲節目，紀錄每一顆熱愛音樂的靈魂。
+                        </p>
+                    </div>
+                    <!-- 後方裝飾方框 -->
+                    <div class="absolute -top-4 -left-4 w-full h-full rounded-2xl border-2 border-brand-gold/10 z-0"></div>
+                </div>
+
+                <!-- 右側：品牌理念 -->
+                <div class="lg:col-span-7 space-y-8">
+                    <div>
+                        <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">ABOUT OUR PLATFORM</h2>
+                        <h3 class="text-3xl sm:text-4xl font-extrabold text-white">連結音樂與生活</h3>
+                    </div>
+                    <p class="text-gray-300 text-base leading-relaxed">
+                        「Whimsical」創作來自奇思妙想，為音樂愛好者及相關專業人士提供媒體平台。透過豐富的節目策劃，挖掘都市中潛藏的動人旋律。
+                    </p>
+
+                    <!-- 三大核心板塊 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="p-6 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300">
+                            <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-microphone text-brand-gold text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">挖掘精彩素人</h4>
+                            <p class="text-xs text-gray-400">訪談各行各業的音樂高手，分享他們的追夢細節。</p>
+                        </div>
+                        
+                    
+
+                        <div class="p-6 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300">
+                            <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-play text-brand-gold text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">原創影音片段</h4>
+                            <p class="text-xs text-gray-400">不間斷產出高品質音樂節目與深度訪談影片內容。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 兩大節目板塊 (The Shows Section) -->
+    <section id="shows" class="page-section py-24 bg-brand-navy relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">WHIMSICAL SHOWS</h2>
+                <h3 class="text-3xl sm:text-5xl font-extrabold text-white">兩大音樂節目</h3>
+                <p class="max-w-2xl mx-auto text-gray-400 text-sm sm:text-base mt-4">
+                    點擊下方分頁切換探索 Whimsical Media 在 YouTube 平台上兩大單元
+                </p>
+            </div>
+
+            <!-- 切換分頁 Tabs -->
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex rounded-full bg-brand-dark p-1.5 border border-brand-gold/20">
+                    <button onclick="switchShowTab('freetalk')" id="btn-tab-freetalk" class="px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark">
+                        1. 自由唱，自由講
+                    </button>
+                    <button onclick="switchShowTab('soundbox')" id="btn-tab-soundbox" class="px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white">
+                        2. Sound Box 聲盒子
+                    </button>
+                </div>
+            </div>
+
+            <!-- 節目一內容: 自由唱，自由講 -->
+            <div id="tab-content-freetalk" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center transition-all duration-500">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="inline-block px-3 py-1 rounded bg-brand-gold/10 border border-brand-gold/30 text-xs font-bold text-brand-gold tracking-widest uppercase">
+                        訪談節目 / INTERVIEW SHOW
+                    </div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">自由唱，自由講</h3>
+                    <p class="text-gray-300 leading-relaxed text-base">
+                        這是一檔深度訪談的節目。深入剖析與音樂相關產業工作者的專業分享及有趣故事。
+                    </p>
+                    
+                    <div class="space-y-4">
+                    
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mt-1 text-xs font-bold">★</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">行業祕密對談</h4>
+                                <p class="text-xs text-gray-400 mt-1">主持人攜手來賓，探討那些沒人提過、卻充滿奇妙色彩趣聞及音樂交叉點。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="https://www.youtube.com/@WhimsicalMedia-c2z" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs tracking-wider transition-all duration-300 shadow-lg">
+                            <i class="fa-brands fa-youtube text-lg"></i> 前往 YouTube 觀看更多
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 模擬 YouTube 播放器與互動式集數切換 -->
+                <div class="lg:col-span-6">
+                    <div class="rounded-2xl overflow-hidden border border-brand-gold/20 shadow-2xl bg-brand-card">
+                        <!-- 模擬影片視窗 -->
+                        <div id="freetalk-video-container" class="relative aspect-video bg-black flex items-center justify-center group cursor-pointer" onclick="playFreetalkVideo()">
+                            <!-- 模擬影片縮圖 (官方封面) -->
+                            <img id="freetalk-thumb" src="https://img.youtube.com/vi/QIfaRVhCB_c/maxresdefault.jpg" alt="自由唱自由講" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500">
+                            <!-- 暗色遮罩 -->
+                            <div class="absolute inset-0 bg-brand-dark/40 group-hover:bg-brand-dark/20 transition-colors"></div>
+                            
+                            <!-- 播放按鈕 -->
+                            <div class="relative z-10 w-16 h-16 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                                <i class="fa-solid fa-play text-2xl ml-1"></i>
+                            </div>
+
+                            <!-- 標題條 -->
+                            <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between pointer-events-none">
+                                <p class="text-xs text-white font-semibold" id="freetalk-video-title">正在播放：自由唱，自由講 EP.47 - 李竣業 (Steven)</p>
+                               
+                            </div>
+                        </div>
+
+                        <!-- 互動集數切換面板 -->
+                        <div class="p-4 bg-brand-dark">
+                            <p class="text-xs text-brand-gold font-bold tracking-widest uppercase mb-3">其他精彩選集</p>
+                            <div class="grid grid-cols-3 gap-2" id="freetalk-episodes-grid">
+                                <button onclick="changeEpisode('freetalk', 12, '李竣業 (Steven)', 'QIfaRVhCB_c')" id="ep-btn-12" class="p-2 rounded bg-brand-dark border-2 border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-brand-gold">EP-47</p>
+                                    <p class="text-xs font-semibold text-white truncate">李竣業 (Steven)</p>
+                                </button>
+                                <button onclick="changeEpisode('freetalk', 11, '曹越 (Leni)', '0hCFx9muJMk')" id="ep-btn-11" class="p-2 rounded bg-brand-dark/40 border border-brand-gold/10 hover:border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-gray-400">EP-42</p>
+                                    <p class="text-xs font-semibold text-gray-300 truncate">曹越 (Leni)</p>
+                                </button>
+                                <button onclick="changeEpisode('freetalk', 10, '林曉培(Shino)', 'kqrCAzepwsA')" id="ep-btn-10" class="p-2 rounded bg-brand-dark/40 border border-brand-gold/10 hover:border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-gray-400">EP-0</p>
+                                    <p class="text-xs font-semibold text-gray-300 truncate">林曉培(Shino)</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 節目二內容: Sound Box 聲盒子 (預設隱藏) -->
+            <div id="tab-content-soundbox" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-12 items-center transition-all duration-500">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="inline-block px-3 py-1 rounded bg-brand-gold/10 border border-brand-gold/30 text-xs font-bold text-brand-gold tracking-widest uppercase">
+                        歌唱節目 / SINGING SHOW
+                    </div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Sound Box 聲盒子</h3>
+                    <p class="text-gray-300 leading-relaxed text-base">
+                        這是一個極簡而震撼的純歌唱舞台。在名為「聲盒子」的高規格空間內，沒有多餘的干擾，只保留人聲、樂器與靈魂的震顫。來賓用純粹的現場演出及精緻伴奏。透過多機位拍攝、優質錄音設備，完美還原最真實的表演。
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mt-1 text-xs font-bold">1</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">無死角視聽感官</h4>
+                                <p class="text-xs text-gray-400 mt-1">4K 電影級畫質呈現，專注於歌唱者閉眼吸氣、唱出高音瞬間的深刻情緒。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mt-1 text-xs font-bold">2</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">現場錄音真實保留</h4>
+                                <p class="text-xs text-gray-400 mt-1">回歸音樂本身，用單把吉他、一台鋼琴，放大溫暖純淨的好聲音。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="https://www.youtube.com/@WhimsicalMedia-c2z" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs tracking-wider transition-all duration-300 shadow-lg">
+                            <i class="fa-brands fa-youtube text-lg"></i> 開啟 YouTube 音樂饗宴
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 模擬 YouTube 播放器與互動式集數切換 -->
+                <div class="lg:col-span-6">
+                    <div class="rounded-2xl overflow-hidden border border-brand-gold/20 shadow-2xl bg-brand-card">
+                        <!-- 模擬影片視窗 -->
+                        <div id="soundbox-video-container" class="relative aspect-video bg-black flex items-center justify-center group cursor-pointer" onclick="playSoundboxVideo()">
+                            <!-- 模擬影片縮圖 -->
+                            <img id="soundbox-thumb" src="https://img.youtube.com/vi/rZF6ZDaQsFI/maxresdefault.jpg" alt="Sound Box 聲盒子" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500">
+                            <!-- 暗色遮罩 -->
+                            <div class="absolute inset-0 bg-brand-dark/40 group-hover:bg-brand-dark/20 transition-colors"></div>
+                            
+                            <!-- 播放按鈕 -->
+                            <div class="relative z-10 w-16 h-16 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                                <i class="fa-solid fa-play text-2xl ml-1"></i>
+                            </div>
+
+                            <!-- 標題條 -->
+                            <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between pointer-events-none">
+                                <p class="text-xs text-white font-semibold" id="soundbox-video-title">正在播放：Sound Box EP-24 - 李竣業 (Steven)</p>
+                                <span class="px-2 py-0.5 rounded bg-brand-gold text-brand-dark font-bold text-[10px]">LIVE</span>
+                            </div>
+                        </div>
+
+                        <!-- 互動集數切換面板 -->
+                        <div class="p-4 bg-brand-dark">
+                            <p class="text-xs text-brand-gold font-bold tracking-widest uppercase mb-3">其他精彩選集</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="changeEpisode('soundbox', 24, '李竣業 (Steven)', 'https://img.youtube.com/vi/rZF6ZDaQsFI/maxresdefault.jpg', 'rZF6ZDaQsFI')" class="p-2 rounded bg-brand-dark border border-brand-gold/20 hover:border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-brand-gold">EP-24</p>
+                                    <p class="text-xs font-semibold text-white truncate">李竣業 (Steven)</p>
+                                </button>
+                                <button onclick="changeEpisode('soundbox', 28, '麥濬言 (Ican)', 'https://img.youtube.com/vi/S0uFTQfBSQQ/maxresdefault.jpg', 'S0uFTQfBSQQ')" class="p-2 rounded bg-brand-dark/40 border border-brand-gold/5 hover:border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-gray-400">EP-28</p>
+                                    <p class="text-xs font-semibold text-gray-300 truncate">麥濬言 (Ican)</p>
+                                </button>
+                                <button onclick="changeEpisode('soundbox', 26, '蜜兒 & 阿善', 'https://img.youtube.com/vi/U_PbEO5XGqs/maxresdefault.jpg', 'U_PbEO5XGqs')" class="p-2 rounded bg-brand-dark/40 border border-brand-gold/5 hover:border-brand-gold text-left transition-all duration-300">
+                                    <p class="text-[10px] font-bold text-gray-400">EP-26</p>
+                                    <p class="text-xs font-semibold text-gray-300 truncate">蜜兒 &amp; 阿善</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 自彈自唱課程 (Courses Section) -->
+    <section id="courses" class="page-section py-24 bg-brand-dark relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- 左側：課程核心文案 (已移除切換按鈕，只保留鋼琴課程的介紹) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase">MUSIC ACADEMY</h2>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Whimsical 自彈自唱課程</h3>
+                    <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                        你是否夢想過坐在鋼琴前，自如地用雙手和弦伴奏自己的歌聲？我們的「自彈自唱課程」專為零基礎到中階學員設計。我們不教死板的樂理公式，而是直接從實戰流行歌曲和弦，以及彈唱協調性切入，學員平均2-4小時完成課堂，可初步自彈自唱。
+                    </p>
+
+                    <!-- 共通課程亮點 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-brand-gold"></i>
+                            <span class="text-base text-gray-300 font-medium">1 對 1 專業客製化授課</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-brand-gold"></i>
+                            <span class="text-base text-gray-300 font-medium">專屬彈唱教室</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-brand-gold"></i>
+                            <span class="text-base text-gray-300 font-medium">平均2-4小時掌握自彈自唱</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-brand-gold"></i>
+                            <span class="text-base text-gray-300 font-medium">絕對合理經濟的收費</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：課程特寫卡片 (只保留 流行鋼琴彈唱班 且不含學費，對接 Whatsapp) -->
+                <div class="lg:col-span-7">
+                    <div class="rounded-2xl border border-brand-gold/20 shadow-2xl overflow-hidden bg-brand-navy p-6 sm:p-8 relative">
+                        
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-2xl font-bold text-white mb-1">流行鋼琴自彈自唱速成班</h4>
+                                    <p class="text-xs text-brand-gold font-semibold tracking-wider">Pop Piano Self-Singing Program</p>
+                                </div>
+                                <span class="px-3 py-1 rounded bg-brand-gold/20 text-brand-gold font-bold text-xs">氣質首選</span>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&q=80&w=1000" alt="鋼琴彈唱課程" class="w-full h-48 object-cover rounded-xl border border-brand-gold/10">
+                            
+                            <div class="space-y-3">
+                                <h5 class="font-bold text-white text-sm">課程模組大綱：</h5>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-gray-300">
+                                    <div class="p-3 bg-brand-dark rounded border border-brand-gold/5">
+                                        <p class="font-bold text-brand-gold mb-1">階段一: 萬用和弦公式與雙手伴奏</p>
+                                        <p class="text-gray-400">拋棄傳統死背五線譜，改用簡譜與流行雙手伴奏技巧。</p>
+                                    </div>
+                                    <div class="p-3 bg-brand-dark rounded border border-brand-gold/5">
+                                        <p class="font-bold text-brand-gold mb-1">階段二: 彈唱情感鋪陳與裝飾音</p>
+                                        <p class="text-gray-400">掌握輕重力度、踏板配合，以及歌聲與鋼琴的主從搭配。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 課程收費 -->
+                            <div class="bg-brand-dark rounded-xl border border-brand-gold/10 p-4 text-left">
+                                <p class="text-sm font-bold text-gray-300 tracking-wide mb-2">收費</p>
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-lg sm:text-xl font-extrabold text-brand-gold tracking-wide">‧ HK$300 40分鐘</p>
+                                    <p class="text-lg sm:text-xl font-extrabold text-brand-gold tracking-wide">‧ HK$400 1小時</p>
+                                </div>
+                            </div>
+
+                            <!-- 預約諮詢按鈕與對接 WhatsApp -->
+                            <div class="flex items-center justify-end pt-4 border-t border-brand-gold/10">
+                                <a href="https://wa.me/85267779031?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E5%B0%8D%E2%80%9D%E6%B5%81%E8%A1%8C%E9%8B%BC%E7%90%B4%E8%87%AA%E5%BD%85%E8%87%AA%E5%94%B1%E7%B2%BE%E5%93%81%E7%8F%AD%E2%80%9D%E8%AA%B2%E7%A8%8B%E6%9C%89%E8%88%88%E8%B6%A3%EF%BC%8C%E6%83%B3%E6%9F%A5%E8%A9%A2%E5%8F%8A%E9%A0%90%E7%B4%84%E3%80%82" 
+                                   target="_blank" 
+                                   class="px-8 py-4 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-sm tracking-wide transition-all shadow-md flex items-center gap-3">
+                                    <i class="fa-brands fa-whatsapp text-xl"></i> 預約及查詢課程
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 過往活動精選 (Past Events Section) -->
+    <section id="events" class="page-section py-24 bg-brand-navy relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">PAST EVENTS</h2>
+                <h3 class="text-3xl sm:text-5xl font-extrabold text-white">過往活動精選</h3>
+                <p class="max-w-2xl mx-auto text-gray-400 text-sm sm:text-base mt-4">
+                    回顧 Whimsical Media 舉辦的歌唱比賽精彩時刻
+                </p>
+            </div>
+
+            <!-- 切換分頁 Tabs -->
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex rounded-full bg-brand-dark p-1.5 border border-brand-gold/20">
+                    <button onclick="switchEventTab('round2')" id="btn-tab-round2" class="px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark">
+                        第二屆自由唱歌唱比賽
+                    </button>
+                    <button onclick="switchEventTab('round1')" id="btn-tab-round1" class="px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white">
+                        第一屆自由唱歌唱比賽
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第二屆內容 -->
+            <div id="tab-content-round2" class="transition-all duration-500">
+                <div class="bg-brand-navy rounded-2xl border border-brand-gold/20 overflow-hidden p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded bg-brand-gold/10 border border-brand-gold/30 text-xs font-bold text-brand-gold tracking-widest uppercase mb-3">第二屆</span>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-white">自由唱歌唱比賽</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-regular fa-calendar text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">日期</p>
+                                <p class="text-sm font-bold text-white">2025年11月16日</p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-solid fa-location-dot text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">地點</p>
+                                <p class="text-sm font-bold text-white">香港藝術中心</p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-regular fa-clock text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">時間</p>
+                                <p class="text-sm font-bold text-white">下午2:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 第二屆照片牆 -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆1.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆2.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆3.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆4.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆5.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第二屆6.jpg" alt="第二屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第一屆內容 (預設隱藏) -->
+            <div id="tab-content-round1" class="hidden transition-all duration-500">
+                <div class="bg-brand-navy rounded-2xl border border-brand-gold/20 overflow-hidden p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded bg-brand-gold/10 border border-brand-gold/30 text-xs font-bold text-brand-gold tracking-widest uppercase mb-3">第一屆</span>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-white">自由唱歌唱比賽</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-regular fa-calendar text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">日期</p>
+                                <p class="text-sm font-bold text-white">2025年4月5日</p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-solid fa-location-dot text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">地點</p>
+                                <p class="text-sm font-bold text-white">灣仔CD Studio</p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-brand-dark border border-brand-gold/5 flex items-center gap-3">
+                            <i class="fa-regular fa-clock text-brand-gold text-xl"></i>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium">時間</p>
+                                <p class="text-sm font-bold text-white">下午2:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 第一屆照片牆 -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第一屆1.jpg" alt="第一屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第一屆2.jpg" alt="第一屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-brand-gold/10 aspect-[4/3] cursor-pointer">
+                            <img src="./第一屆3.jpg" alt="第一屆自由唱歌唱比賽" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 event-photo" onclick="openLightbox(this, event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    </div>
+
+    <!-- 頁尾 (Footer) -->
+    <footer class="bg-[#052440] border-t border-brand-gold/15 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
+                <!-- Logo (100% 引用您上傳的圓形 Logo 圖片) -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <img src="./cropped_circle_image.png" alt="Whimsical Media Logo" class="h-14 w-auto rounded-full object-contain border border-brand-gold/15">
+                </a>
+                
+                <!-- 快捷選單 -->
+                <div class="flex flex-wrap justify-center gap-8 lg:gap-12 text-xl text-gray-400">
+                    <a href="javascript:void(0)" onclick="switchSection('about')" class="hover:text-brand-gold transition duration-300">關於我們</a>
+                    <a href="javascript:void(0)" onclick="switchSection('shows')" class="hover:text-brand-gold transition duration-300">頻道節目</a>
+                    <a href="javascript:void(0)" onclick="switchSection('events')" class="hover:text-brand-gold transition duration-300">過往活動</a>
+                    <a href="javascript:void(0)" onclick="switchSection('courses')" class="hover:text-brand-gold transition duration-300">自彈自唱課程</a>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between border-t border-brand-dark pt-8 gap-4">
+                <p class="text-xs text-gray-500">
+                    &copy; 2026 Whimsical Media. All Rights Reserved. Designed for music souls.
+                </p>
+                <div class="flex gap-5 items-center">
+                    <a href="https://www.instagram.com/whimsical_media?igsh=OGZ3czUwMXRsOGlt" target="_blank" class="text-gray-400 hover:text-brand-gold transition duration-300 text-6xl" title="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/1LHy7J1Lby/?mibextid=wwXIfr" target="_blank" class="text-gray-400 hover:text-brand-gold transition duration-300 text-6xl" title="Facebook">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="https://youtube.com/@whimsicalmedia-c2z?si=3KvmwdAS6n2kHzCV" target="_blank" class="text-gray-400 hover:text-brand-gold transition duration-300 text-6xl" title="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 全局自訂彈窗 (Custom Modal) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- 遮罩背景 -->
+        <div class="absolute inset-0 bg-brand-dark/80 backdrop-blur-md"></div>
+        <!-- 彈窗本體 -->
+        <div class="relative bg-brand-navy border border-brand-gold/30 rounded-2xl max-w-md w-full p-6 text-center shadow-gold-lg animate-fade-in">
+            <div class="w-16 h-16 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto mb-4 border border-brand-gold/30">
+                <i class="fa-solid fa-circle-check text-2xl"></i>
+            </div>
+            <h4 class="text-xl font-bold text-white mb-2" id="modal-title">奇妙之旅已開啟！</h4>
+            <p class="text-sm text-gray-300 leading-relaxed mb-6" id="modal-desc">
+                我們已收到您的資訊。Whimsical Media 音樂推廣專員會儘速與您聯絡。
+            </p>
+            <button onclick="closeModal()" class="w-full py-3 rounded-full bg-brand-gold hover:bg-brand-accent text-brand-dark font-bold text-sm tracking-wide transition duration-300">
+                了解，太棒了！
+            </button>
+        </div>
+    </div>
+
+    <!-- 照片燈箱 (Lightbox) -->
+    <div id="lightbox-overlay" class="lightbox-overlay" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="lightbox-nav lightbox-prev" onclick="prevLightboxImage(event)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <img id="lightbox-img" class="lightbox-image" src="" alt="">
+        <button class="lightbox-nav lightbox-next" onclick="nextLightboxImage(event)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div id="lightbox-counter" class="lightbox-counter"></div>
+    </div>
+
+    <!-- 底部常駐微播放器 (浮動) -->
+    <div id="floating-music-bar" class="fixed bottom-4 right-4 z-40 p-4 rounded-xl bg-brand-card/95 border border-brand-gold/30 backdrop-blur-md shadow-lg max-w-sm w-80 translate-y-24 opacity-0 transition-all duration-500 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded bg-brand-navy flex items-center justify-center border border-brand-gold/20 animate-spin" style="animation-duration: 8s" id="mini-disc">
+                    <i class="fa-solid fa-compact-disc text-brand-gold text-2xl"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-[10px] text-brand-gold font-bold tracking-widest uppercase">Playing Demo</p>
+                    <h5 class="text-xs font-semibold text-white truncate w-36" id="mini-track-title">Sound Box 精選翻唱《溫柔》</h5>
+                </div>
+            </div>
+            <!-- 控制鈕 -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleMiniPlayer()" class="w-8 h-8 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center text-xs hover:bg-brand-accent">
+                    <i id="mini-play-icon" class="fa-solid fa-play"></i>
+                </button>
+                <button onclick="closeMiniPlayer()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <!-- 虛擬波形效果 -->
+        <div class="h-4 flex items-center justify-between px-1 gap-[3px]" id="mini-wave">
+            <!-- 動態波形柱 -->
+            <span class="w-[5px] h-3 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-1.5 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-4 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-2 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-1 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-3 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-2 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-4 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-1 bg-brand-gold/50 rounded-full transition-all"></span>
+            <span class="w-[5px] h-3 bg-brand-gold/50 rounded-full transition-all"></span>
+        </div>
+    </div>
+
+    <!-- JS 互動腳本邏輯 -->
+    <script>
+        // 手機版選單切換
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 收闔選單在點擊連結後
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // 滾動時導航欄精緻背景漸變
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-4', 'shadow-lg');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('py-4', 'shadow-lg');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // 分頁區段切換
+        const sectionRouteMap = {
+            about: 'home',
+            shows: 'shows',
+            events: 'events',
+            courses: 'courses'
+        };
+        const routeToSection = Object.fromEntries(
+            Object.entries(sectionRouteMap).map(([k, v]) => [v, k])
+        );
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active');
+            }
+            // 更新 URL hash（不觸發 scroll）
+            const route = sectionRouteMap[sectionId] || sectionId;
+            if (window.location.hash !== '#' + route) {
+                history.pushState(null, '', '#' + route);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 根據 URL hash 載入對應分頁
+        function initSectionFromHash() {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            const sectionId = routeToSection[hash] || 'about';
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+
+        // 瀏覽器上一頁／下一頁支援
+        window.addEventListener('popstate', initSectionFromHash);
+
+        // 頁面載入時初始化
+        initSectionFromHash();
+
+        // 兩大節目分頁 Tab 切換邏輯
+        function switchShowTab(tabId) {
+            const freetalkTab = document.getElementById('tab-content-freetalk');
+            const soundboxTab = document.getElementById('tab-content-soundbox');
+            
+            const btnFreetalk = document.getElementById('btn-tab-freetalk');
+            const btnSoundbox = document.getElementById('btn-tab-soundbox');
+
+            if (tabId === 'freetalk') {
+                freetalkTab.classList.remove('hidden');
+                soundboxTab.classList.add('hidden');
+                
+                btnFreetalk.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark";
+                btnSoundbox.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white";
+            } else {
+                freetalkTab.classList.add('hidden');
+                soundboxTab.classList.remove('hidden');
+
+                btnSoundbox.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark";
+                btnFreetalk.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white";
+            }
+        }
+
+        // 當前播放影片的 YouTube ID
+        let currentYoutubeIds = {
+            freetalk: 'QIfaRVhCB_c',
+            soundbox: '0hCFx9muJMk'
+        };
+        let currentSoundboxYoutubeId = 'rZF6ZDaQsFI';
+
+        // 播放「自由唱，自由講」YouTube 影片
+        function playFreetalkVideo() {
+            const videoId = currentYoutubeIds.freetalk;
+            const container = document.getElementById('freetalk-video-container');
+            container.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+        }
+
+        // 播放「Sound Box 聲盒子」YouTube 影片
+        function playSoundboxVideo() {
+            const container = document.getElementById('soundbox-video-container');
+            container.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${currentSoundboxYoutubeId}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+        }
+
+        // 節目影片集數與實際 YouTube ID 切換
+        function changeEpisode(showType, epNumber, text, videoIdOrSrc, videoId) {
+            if (showType === 'freetalk') {
+                currentYoutubeIds.freetalk = videoIdOrSrc;
+                
+                // 還原點擊播放封面容器
+                const container = document.getElementById('freetalk-video-container');
+                container.innerHTML = `
+                    <img id="freetalk-thumb" src="https://img.youtube.com/vi/${videoIdOrSrc}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${videoIdOrSrc}/hqdefault.jpg'" alt="自由唱自由講" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-brand-dark/40 group-hover:bg-brand-dark/20 transition-colors"></div>
+                    <div class="relative z-10 w-16 h-16 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                        <i class="fa-solid fa-play text-2xl ml-1"></i>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between pointer-events-none">
+                        <p class="text-xs text-white font-semibold" id="freetalk-video-title">正在播放：自由唱，自由講 EP.${epNumber} - ${text}</p>
+                        <span class="px-2 py-0.5 rounded bg-brand-gold text-brand-dark font-bold text-[10px]">LIVE</span>
+                    </div>
+                `;
+
+                // 移除所有按鈕的 active 狀態
+                const buttons = ['ep-btn-12', 'ep-btn-11', 'ep-btn-10'];
+                buttons.forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) {
+                        btn.className = "p-2 rounded bg-brand-dark/40 border border-brand-gold/10 hover:border-brand-gold text-left transition-all duration-300";
+                        const pTag = btn.querySelector('p');
+                        if (pTag) pTag.className = "text-[10px] font-bold text-gray-400";
+                        const subTag = btn.querySelectorAll('p')[1];
+                        if (subTag) subTag.className = "text-xs font-semibold text-gray-300 truncate";
+                    }
+                });
+
+                // 為當前點擊的按鈕加入金色 active 邊框
+                const activeBtn = document.getElementById(`ep-btn-${epNumber}`);
+                if (activeBtn) {
+                    activeBtn.className = "p-2 rounded bg-brand-dark border-2 border-brand-gold text-left transition-all duration-300";
+                    const pTag = activeBtn.querySelector('p');
+                    if (pTag) pTag.className = "text-[10px] font-bold text-brand-gold";
+                    const subTag = activeBtn.querySelectorAll('p')[1];
+                    if (subTag) subTag.className = "text-xs font-semibold text-white truncate";
+                }
+            } else if (showType === 'soundbox') {
+                if (videoId) currentSoundboxYoutubeId = videoId;
+                
+                // 還原點擊播放封面容器（讓使用者可重新選擇其他集數）
+                const container = document.getElementById('soundbox-video-container');
+                container.innerHTML = `
+                    <img id="soundbox-thumb" src="${videoIdOrSrc}" alt="Sound Box 聲盒子" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-brand-dark/40 group-hover:bg-brand-dark/20 transition-colors"></div>
+                    <div class="relative z-10 w-16 h-16 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                        <i class="fa-solid fa-play text-2xl ml-1"></i>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between pointer-events-none">
+                        <p class="text-xs text-white font-semibold" id="soundbox-video-title">正在播放：Sound Box EP-${epNumber < 10 ? '0' + epNumber : epNumber} - ${text}</p>
+                        <span class="px-2 py-0.5 rounded bg-brand-gold text-brand-dark font-bold text-[10px]">LIVE</span>
+                    </div>
+                `;
+                
+                // 恢復播放按鈕的點擊事件
+                container.onclick = playSoundboxVideo;
+            }
+        }
+
+        // 常駐微播放器控制
+        let isMusicPlaying = false;
+        const floatingMusicBar = document.getElementById('floating-music-bar');
+        const miniPlayIcon = document.getElementById('mini-play-icon');
+        const miniDisc = document.getElementById('mini-disc');
+        const miniWave = document.getElementById('mini-wave');
+
+        function toggleMiniPlayer() {
+            isMusicPlaying = !isMusicPlaying;
+            updatePlayStates();
+        }
+
+        function updatePlayStates() {
+            if (isMusicPlaying) {
+                miniPlayIcon.className = "fa-solid fa-pause";
+                miniDisc.classList.add('animate-spin');
+                
+                const spans = miniWave.querySelectorAll('span');
+                spans.forEach((span, i) => {
+                    span.style.animation = `bounce ${0.6 + (i * 0.1)}s ease-in-out infinite alternate`;
+                });
+            } else {
+                miniPlayIcon.className = "fa-solid fa-play";
+                miniDisc.classList.remove('animate-spin');
+                
+                const spans = miniWave.querySelectorAll('span');
+                spans.forEach(span => {
+                    span.style.animation = 'none';
+                    span.style.height = '6px';
+                });
+            }
+        }
+
+        function closeMiniPlayer() {
+            floatingMusicBar.classList.add('translate-y-24', 'opacity-0');
+            floatingMusicBar.classList.remove('translate-y-0', 'opacity-100');
+            isMusicPlaying = false;
+            updatePlayStates();
+        }
+
+        // 播放音樂時連動右下角小音軌
+        function playMockVideo(showType) {
+            let title = "";
+            if (showType === 'freetalk') {
+                title = document.getElementById('freetalk-video-title').innerText.replace("正在播放：", "");
+            } else {
+                title = document.getElementById('soundbox-video-title').innerText.replace("正在播放：", "");
+            }
+            
+            document.getElementById('mini-track-title').innerText = title;
+            floatingMusicBar.classList.remove('translate-y-24', 'opacity-0');
+            floatingMusicBar.classList.add('translate-y-0', 'opacity-100');
+            isMusicPlaying = true;
+            updatePlayStates();
+        }
+
+        // 自定義彈窗 (Modal) 管理
+        function openBookingModal(courseName) {
+            document.getElementById('modal-title').innerText = `已預約：${courseName}`;
+            document.getElementById('modal-desc').innerText = `太棒了！我們已將體驗名額為您鎖定。Whimsical 音樂導師會儘速與您取得聯繫，確認上課細節與日期。`;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // 過往活動精選 Tab 切換
+        function switchEventTab(tabId) {
+            const round2Tab = document.getElementById('tab-content-round2');
+            const round1Tab = document.getElementById('tab-content-round1');
+            
+            const btnRound2 = document.getElementById('btn-tab-round2');
+            const btnRound1 = document.getElementById('btn-tab-round1');
+
+            if (tabId === 'round2') {
+                round2Tab.classList.remove('hidden');
+                round1Tab.classList.add('hidden');
+                
+                btnRound2.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark";
+                btnRound1.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white";
+            } else {
+                round1Tab.classList.remove('hidden');
+                round2Tab.classList.add('hidden');
+
+                btnRound1.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 bg-brand-gold text-brand-dark";
+                btnRound2.className = "px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 text-gray-400 hover:text-white";
+            }
+        }
+
+        // 照片燈箱 (Lightbox) 控制
+        let lightboxImages = [];
+        let lightboxIndex = 0;
+
+        function initLightbox() {
+            lightboxImages = Array.from(document.querySelectorAll('.event-photo')).map(img => img.src);
+        }
+
+        function openLightbox(imgEl, event) {
+            if (event) event.stopPropagation();
+            initLightbox();
+            lightboxIndex = lightboxImages.indexOf(imgEl.src);
+            if (lightboxIndex === -1) return;
+            
+            document.getElementById('lightbox-img').src = imgEl.src;
+            updateLightboxCounter();
+            document.getElementById('lightbox-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('lightbox-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function prevLightboxImage(event) {
+            if (event) event.stopPropagation();
+            lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+            document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
+            updateLightboxCounter();
+        }
+
+        function nextLightboxImage(event) {
+            if (event) event.stopPropagation();
+            lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+            document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
+            updateLightboxCounter();
+        }
+
+        function updateLightboxCounter() {
+            document.getElementById('lightbox-counter').textContent = `${lightboxIndex + 1} / ${lightboxImages.length}`;
+        }
+
+        // 鍵盤導航支援
+        document.addEventListener('keydown', (e) => {
+            const overlay = document.getElementById('lightbox-overlay');
+            if (!overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox(e);
+            if (e.key === 'ArrowLeft') prevLightboxImage(e);
+            if (e.key === 'ArrowRight') nextLightboxImage(e);
+        });
+    </script>
+</body>
+</html>
