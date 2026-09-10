@@ -286,6 +286,7 @@
                         </div>
                     </div>
                     <a href="javascript:void(0)" onclick="switchSection('courses')" class="text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">自彈自唱課程</a>
+                    <a href="javascript:void(0)" onclick="switchSection('engineering')" class="text-gray-300 hover:text-brand-gold transition duration-300 text-base font-medium tracking-wide">音響燈光工程</a>
                 </div>
 
                 <!-- 手機版選單按鈕 -->
@@ -307,6 +308,7 @@
             <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round2');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy/50">　↳ 第二屆自由唱歌唱比賽</a>
             <a href="javascript:void(0)" onclick="switchSection('events');setTimeout(function(){switchEventTab('round1');mobileMenu.classList.add('hidden')},100)" class="block text-gray-400 hover:text-brand-gold transition text-sm py-2 pl-6 border-b border-brand-navy">　↳ 第一屆自由唱歌唱比賽</a>
             <a href="javascript:void(0)" onclick="switchSection('courses');mobileMenu.classList.add('hidden')" class="block text-gray-300 hover:text-brand-gold transition text-base py-2 border-b border-brand-navy">自彈自唱課程</a>
+            <a href="javascript:void(0)" onclick="switchSection('engineering');mobileMenu.classList.add('hidden')" class="block text-gray-300 hover:text-brand-gold transition text-base py-2 border-b border-brand-navy">音響燈光工程</a>
         </div>
     </nav>
 
@@ -410,7 +412,7 @@
                     </div>
                     <h3 class="text-3xl sm:text-4xl font-extrabold text-white">自由唱，自由講</h3>
                     <p class="text-gray-300 leading-relaxed text-base">
-                        這是一檔深度訪談的節目。深入剖析與音樂相關產業工作者的專業分享及有趣故事。
+                        這是一檔深度訪談的節目。主持Steven李竣業請來不同嘉賓，深入剖析與音樂相關產業工作者的專業分享及有趣故事。
                     </p>
                     
                     <div class="space-y-4">
@@ -483,22 +485,20 @@
                     </div>
                     <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Sound Box 聲盒子</h3>
                     <p class="text-gray-300 leading-relaxed text-base">
-                        這是一個極簡而震撼的純歌唱舞台。在名為「聲盒子」的高規格空間內，沒有多餘的干擾，只保留人聲、樂器與靈魂的震顫。來賓用純粹的現場演出及精緻伴奏。透過多機位拍攝、優質錄音設備，完美還原最真實的表演。
+                        在名為「聲盒子」的歌唱舞台，來賓用純粹的現場演出及精緻伴奏，透過多機位拍攝、優質錄音設備，完美還原最真實的表演。
                     </p>
                     
                     <div class="space-y-4">
                         <div class="flex items-start gap-3">
                             <span class="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mt-1 text-xs font-bold">1</span>
                             <div>
-                                <h4 class="font-bold text-white text-sm">無死角視聽感官</h4>
-                                <p class="text-xs text-gray-400 mt-1">4K 電影級畫質呈現，專注於歌唱者閉眼吸氣、唱出高音瞬間的深刻情緒。</p>
+                                <h4 class="font-bold text-white text-sm">4K 電影級畫質</h4>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mt-1 text-xs font-bold">2</span>
                             <div>
                                 <h4 class="font-bold text-white text-sm">現場錄音真實保留</h4>
-                                <p class="text-xs text-gray-400 mt-1">回歸音樂本身，用單把吉他、一台鋼琴，放大溫暖純淨的好聲音。</p>
                             </div>
                         </div>
                     </div>
@@ -774,6 +774,97 @@
         </div>
     </section>
 
+    <!-- 音響與燈光工程服務 (Audio & Lighting Engineering Section) -->
+    <section id="engineering" class="page-section py-24 bg-brand-dark relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Hero 主視覺區 -->
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 rounded bg-brand-gold/10 border border-brand-gold/30 text-xs font-bold text-brand-gold tracking-widest uppercase mb-4">EVENT PRODUCTION</span>
+                <h1 class="text-3xl sm:text-5xl font-extrabold text-white mb-6 leading-tight">專業音響與燈光工程服務</h1>
+                <p class="max-w-3xl mx-auto text-gray-400 text-sm sm:text-base leading-relaxed mb-8">
+                    從音響調校到舞台光影編程，Whimsical Media 為音樂會、歌唱比賽、商業活動及戶外演出提供專業現場技術支援。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="https://wa.me/85267779032" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-brand-gold hover:bg-brand-accent text-brand-dark font-extrabold text-sm tracking-wide transition-all duration-300 shadow-gold-lg">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> 立即索取免費報價
+                    </a>
+                    <a href="javascript:void(0)" onclick="scrollToEngineeringContact()" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-brand-gold/40 hover:border-brand-gold text-brand-gold font-extrabold text-sm tracking-wide transition-all duration-300">
+                        <i class="fa-solid fa-comments"></i> 諮詢工程方案
+                    </a>
+                </div>
+            </div>
+
+            <!-- 服務簡介 (About Our Services) -->
+            <div class="max-w-3xl mx-auto mb-16 text-center">
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    Whimsical Media 擁有豐富的音樂內容製作與現場演出執行經驗。
+                </p>
+                <p class="text-gray-300 leading-relaxed">
+                    我們提供由規劃、器材租賃、現場搭建、系統調校到現場控台操控的一站式音響及燈光工程服務，針對不同場地特性與預算需求，量身打造最合適的技術解決方案。
+                </p>
+            </div>
+
+            <!-- 服務範圍 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                <div class="rounded-2xl border border-brand-gold/20 bg-brand-card/40 p-6 sm:p-8">
+                    <h3 class="text-xl font-extrabold text-white mb-3">音響工程</h3>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        專業音響系統規劃、現場搭建、系統調校與控台操控，針對不同場地特性量身打造最合適的聲音方案，確保每場演出的聲音清晰、穩定而具感染力。
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-brand-gold/20 bg-brand-card/40 p-6 sm:p-8">
+                    <h3 class="text-xl font-extrabold text-white mb-3">燈光工程與視覺設計</h3>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        透過精準的燈光佈局與舞台光影編程，讓舞台視覺與音樂節奏完美同步，營造具層次與溫度的現場氛圍。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 適用場景 (Applicable Events) -->
+            <div class="mb-16">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-3">適用場景</h3>
+                    <p class="text-gray-400 text-sm sm:text-base">無論規模大小，我們均能提供最合適的現場技術支援：</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300 text-center">
+                        <span class="text-sm text-gray-300 font-medium">音樂會 / 演唱會 / Live House 演出</span>
+                    </div>
+                    <div class="p-5 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300 text-center">
+                        <span class="text-sm text-gray-300 font-medium">歌唱比賽 / 才藝表演 / 音樂節</span>
+                    </div>
+                    <div class="p-5 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300 text-center">
+                        <span class="text-sm text-gray-300 font-medium">街頭表演 / Busking / 快閃活動</span>
+                    </div>
+                    <div class="p-5 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300 text-center">
+                        <span class="text-sm text-gray-300 font-medium">商業發佈會 / 企業年會 / 展覽活動</span>
+                    </div>
+                    <div class="p-5 rounded-xl bg-brand-card/50 border border-brand-gold/5 hover:border-brand-gold/20 transition-all duration-300 text-center">
+                        <span class="text-sm text-gray-300 font-medium">婚禮宴會 / 私人派對 / 社區與學校活動</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 聯絡我們 / 索取報價 -->
+            <div id="engineering-contact" class="rounded-2xl border border-brand-gold/30 bg-brand-navy p-6 sm:p-10 text-center shadow-gold-lg">
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-3">聯絡我們 / 索取報價</h3>
+                <p class="max-w-2xl mx-auto text-gray-300 leading-relaxed mb-8">
+                    準備好為您的活動打造精彩現場了嗎？歡迎聯絡我們，獲取免費諮詢與專屬工程報價！
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="https://wa.me/85267779032" target="_blank" class="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-sm tracking-wide transition-all shadow-md">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> WhatsApp：+852 67779032
+                    </a>
+                    <a href="mailto:whimsicalmedia.info@gmail.com" class="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-brand-gold hover:bg-brand-accent text-brand-dark font-extrabold text-sm tracking-wide transition-all shadow-md">
+                        <i class="fa-solid fa-envelope text-xl"></i> whimsicalmedia.info@gmail.com
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
     </div>
 
     <!-- 頁尾 (Footer) -->
@@ -791,6 +882,7 @@
                     <a href="javascript:void(0)" onclick="switchSection('shows')" class="hover:text-brand-gold transition duration-300">頻道節目</a>
                     <a href="javascript:void(0)" onclick="switchSection('events')" class="hover:text-brand-gold transition duration-300">過往活動</a>
                     <a href="javascript:void(0)" onclick="switchSection('courses')" class="hover:text-brand-gold transition duration-300">自彈自唱課程</a>
+                    <a href="javascript:void(0)" onclick="switchSection('engineering')" class="hover:text-brand-gold transition duration-300">音響燈光工程</a>
                 </div>
             </div>
 
@@ -919,7 +1011,8 @@
             about: 'home',
             shows: 'shows',
             events: 'events',
-            courses: 'courses'
+            courses: 'courses',
+            engineering: 'engineering'
         };
         const routeToSection = Object.fromEntries(
             Object.entries(sectionRouteMap).map(([k, v]) => [v, k])
@@ -976,6 +1069,14 @@
                 }
             }
         });
+
+        // 捲動至工程服務聯絡區塊
+        function scrollToEngineeringContact() {
+            const el = document.getElementById('engineering-contact');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
 
         // 兩大節目分頁 Tab 切換邏輯
         function switchShowTab(tabId) {
